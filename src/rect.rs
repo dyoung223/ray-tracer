@@ -23,7 +23,6 @@ fn point_in_quadrilateral(pointz: f32, pointy: f32, quad: &Quadrilateral) -> boo
       if (p1.1 > pointy) != (p2.1 > pointy) {
           // Compute the z coordinate of the intersection
           let intersect_z = (p2.0 - p1.0) * (pointy - p1.1) / (p2.1 - p1.1) + p1.0;
-          //let intersect_z = p1.0 + (pointy - p1.1) * (p2.0 - p1.0) / (p2.1 - p1.1);
           if pointz < intersect_z {
               crossings += 1;
           }
@@ -147,9 +146,7 @@ impl Hittable for Quadrilateral {
     if !point_in_quadrilateral(z, y, self){
       return false;
     }
-    // if z < self.minz || z > self.maxz || y < self.miny || y > self.maxy {
-    //   return false;
-    // }
+
   
 
     // ********** WARNING *************

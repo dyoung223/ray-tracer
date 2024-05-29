@@ -97,7 +97,7 @@ fn scene_driver(select: i32) -> HittableList {
     }
     else if select == 2 {
         objects.add(Arc::new(YzRect::from(-10., 10., -10., 10., -15., light.clone())));
-        //objects.add(Arc::new(Quadrilateral::from((-2.25, 1.25), (2.25, 1.25), (2.25, -1.25), (-2.25, -1.25), -15., light.clone())));
+        
         let mut randlist = Vec::new();
         let mut rng = rand::thread_rng();
         for _ in 0..100 {
