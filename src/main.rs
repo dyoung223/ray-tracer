@@ -159,27 +159,17 @@ fn scene_driver(select: i32) -> HittableList {
 }
 
 
-fn format_bar(bar: &mut String , percentage: f32){
-    bar.clear();
-    let to_color = (percentage / 2.).floor() as i32;
-    bar.push('[');
-    bar.extend((0..to_color).map(|_| '#'));
-    bar.extend((0..(50 - to_color)).map(|_| '.'));
-    bar.push(']');
-}
-
-
 
 fn main() {
     let time = Instant::now(); // Time counter
     //Image info
-    let image_width : usize = 800;
+    let image_width : usize = 400;
     let aspect_ratio : f32 = 16.0/9.0;
 
     let samples_per_pixel : usize = 5000;
     const MAX_DEPTH : usize = 50;
 
-    let mut world = HittableList::new();
+    let world = scene_driver(0);
 
     //Camera
     let lookfrom = Point3::from(-15., 0., 0.);
@@ -192,7 +182,6 @@ fn main() {
 
     let image_height: usize = (image_width as f32 / aspect_ratio) as usize;
 
-    world = scene_driver(0);
 
     let cam = Camera::new(
         lookfrom,
@@ -209,8 +198,8 @@ fn main() {
     let render_pixel = |i, j| -> Color {
         let mut pixel_color = Color::new();
         for _ in 0..samples_per_pixel {
-            let u = (i as f32 + random_double(0., 1.)) / ((image_width - 1) as f32);
-            let v = (j as f32 + random_double(0., 1.)) / ((image_height - 1) as f32);
+            let u = (i as f32 + random_double(0., 1.)) / ((image_width - 1) as f32); //horizontal random 
+            let v = (j as f32 + random_double(0., 1.)) / ((image_height - 1) as f32); //vertical random
             let r = cam.get_ray(u, v);
             pixel_color.add(ray_color(r, &background, &world, MAX_DEPTH as i32));
         }
@@ -218,36 +207,20 @@ fn main() {
     };
 
     // Render
-    // let c = Canvas::from_fn(
-    //     image_width as usize,
-    //     image_height as usize,
-    //     samples_per_pixel as usize,
-    //     render_pixel,
-    // );
-
-    let c: Canvas = Canvas::from_fn_parallel(
+    let c = Canvas::from_fn(
         image_width as usize,
         image_height as usize,
         samples_per_pixel as usize,
         render_pixel,
     );
 
-    // let mut bar = String::with_capacity(52);
-    // let c = Canvas::from_fn_parallel_with_progress(
+    // let c: Canvas = Canvas::from_fn_parallel(
     //     image_width as usize,
     //     image_height as usize,
     //     samples_per_pixel as usize,
     //     render_pixel,
-    //     move |total, num_done| {
-    //         let percentage = ((num_done as f32 / total as f32) * 100.).min(100.);
-    //         format_bar(&mut bar , percentage);
-    //         eprint!(
-    //             "\r{:?} {:.2}%",
-    //             bar.as_str(),
-    //             ((num_done as f32 / total as f32) * 100.).min(100.)
-    //         );
-    //     },
     // );
+
     
     c.write_header();
     c.write_pixels();
